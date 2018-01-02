@@ -1,6 +1,5 @@
 import os
 import pandas as pd
-import seaborn as sns
 from zipfile import ZipFile
 
 _all_labels = ['toxic','severe_toxic','obscene','threat','insult','identity_hate']
@@ -28,3 +27,17 @@ def get_train_labels():
     train_df = load_dataframes(lookupfor = ['train.csv'])[0]
     return train_df[_all_labels]
 
+def remove_non_strings(list_of_string):
+    tmp = []
+    for line in list_of_string:
+        if not isinstance(line,str):
+            print("Line removed : {}".format(line))
+            line = ""
+        tmp.append(line)
+    return tmp
+
+def dict_to_submit(predicted, name="submission.csv"):
+    predicted['id'] = load_dataframes(['test.csv'])[0]["id"].values
+    tmp = pd.DataFrame.from_dict(predicted)
+    tmp = tmp[['id']+_all_labels]
+    tmp.to_csv(name,index=False)
